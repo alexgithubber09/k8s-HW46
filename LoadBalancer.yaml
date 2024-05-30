@@ -1,0 +1,38 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment-replicas
+  labels:
+    app: web-application-replicas
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      project: my-project-replicas
+  template:
+    metadata:
+      labels:
+        project: my-project-replicas
+    spec:
+      containers:
+        - name: nginx-replicas
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer-service
+  labels:
+    env  : test
+    owner: Alex
+spec:
+  type: LoadBalancer
+  selector:
+    project: my-project-replicas
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
